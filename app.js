@@ -115,12 +115,27 @@ class FetchForm {
         button.setAttribute('disable', '')
         try {
             const data = new FormData(form)
-            const result = await fetchJSON(this.#endpoint, {
+            const comment = await fetchJSON(this.#endpoint, {
                 method: 'POST',
-                body: data
+                json: Object.fromEntries(data)
             })
-            console.log(result)
-        } catch (e) {}
+
+
+            const commentElement= this.#template.content.cloneNode(true)
+            for (const [key, selector] of Object.entries(this.#elements)) {
+                commentElement.querySelector(selector).innerText = comment[key]
+                console.log({key, selector})
+            }
+            this.#target.prepend(commentElement)
+
+            form.reset()
+            button.removeAttribute('disabled')
+        } catch (e) {
+            form.insertAdjacentElement(
+                'beforebegin',
+                alertElement('Erreur serveur')
+             )
+        }
     }
 }
 
