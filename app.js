@@ -1,4 +1,5 @@
 import { fetchJSON } from "./function/api.js"
+import { alertElement } from "./function/alert.js"
 
 class InfinitePagination {
 
@@ -43,26 +44,32 @@ class InfinitePagination {
         if (this.#loading) {
             return
         }
-        this.#loading = true
-        const url = new URL(this.#endpoint)
-        url.searchParams.set('_page', this.#page)
+        try {
+            this.#loading = true
+            const url = new URL(this.#endpoint)
+            url.searchParams.set('_page', this.#page)
 
-        const comments = await fetchJSON(url.toString())
-        if (/*comments.length === 0*/ this.#page === 3) {
+            const comments = await fetchJSON(url.toString())
+            if (/*comments.length === 0*/ this.#page === 3) {
+                this.#observer.disconnect()
+                this.#loader.remove()
+                return
+            }
+            for (const comment of comments) {
+                const commentElement= this.#template.content.cloneNode(true)
+                for (const [key, selector] of Object.entries(this.#elements)) {
+                    commentElement.querySelector(selector).innerText = comment[key]
+                    console.log({key, selector})
+                }
+                this.#target.append(commentElement)
+            }
+            this.#page++
+            this.#loading = false
+        } catch (e) {
+            this.#target.append(alertElement('Impossible de charger les contenus'))
             this.#observer.disconnect()
             this.#loader.remove()
-            return
         }
-        for (const comment of comments) {
-            const commentElement= this.#template.content.cloneNode(true)
-            for (const [key, selector] of Object.entries(this.#elements)) {
-                commentElement.querySelector(selector).innerText = comment[key]
-                console.log({key, selector})
-            }
-            this.#target.append(commentElement)
-        }
-        this.#page++
-        this.#loading = false
     }
 }
 
