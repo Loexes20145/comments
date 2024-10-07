@@ -1,0 +1,1 @@
+Projet JavaScript pour créer un système de commentaires qui se charge dès lors que l'on descend suffisamment dans une page. On créera aussi un système de pagination infinie permettant de charger de nouveaux commentaire lorsque l'on descendra dans la page. Et on finira pas la gestion de l'ajout de nouveaux commentaire à l'aide d'un formulaire HTML.
