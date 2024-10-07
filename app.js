@@ -112,7 +112,7 @@ class FetchForm {
         this.#target = document.querySelector(form.dataset.target)
         this.#elements = JSON.parse(form.dataset.elements)
         const button = form.querySelector('button')
-        button.setAttribute('disable', '')
+        button.setAttribute('disabled', '')
         try {
             const data = new FormData(form)
             const comment = await fetchJSON(this.#endpoint, {
@@ -130,11 +130,20 @@ class FetchForm {
 
             form.reset()
             button.removeAttribute('disabled')
-        } catch (e) {
             form.insertAdjacentElement(
                 'beforebegin',
-                alertElement('Erreur serveur')
-             )
+                alertElement('Merci pour votre commentaire', 'success')
+            )
+        } catch (e) {
+            const errorElement = alertElement('Erreur serveur')
+
+            form.insertAdjacentElement(
+                'beforebegin',
+                errorElement
+            )
+            errorElement.addEventListener('close', () => {
+                button.removeAttribute('disabled')
+            })
         }
     }
 }
